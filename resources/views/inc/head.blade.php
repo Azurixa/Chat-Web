@@ -11,5 +11,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 <link rel='stylesheet' href='https://unpkg.com/boxicons@1.8.1/css/boxicons.min.css'>
 {{-- Scripts --}}
-<script src="/js/app.js?v=0.2" type="application/javascript" defer></script>
-<script src="/js/frontend.js?v=0.2" type="application/javascript" defer></script>
+<script src="/js/app.js?v=0.25" type="application/javascript" defer></script>
+<script src="/js/frontend.js?v=0.25" type="application/javascript" defer></script>

@@ -36,10 +36,13 @@
         },
         methods: {
             login() {
+
+                // User UI response
                 const loginBtn = document.getElementById('login-button');
                 loginBtn.classList.add('btn-secondary');
                 loginBtn.classList.remove('btn-primary');
                 loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
+
                 fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
                     method: "GET",
                     credentials: 'include'

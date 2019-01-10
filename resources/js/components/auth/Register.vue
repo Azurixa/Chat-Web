@@ -20,7 +20,8 @@
                     <input type="password" name="password2" class="form-control" id="password2"
                            placeholder="Confirm password" required v-model="formData.passwordConfirm">
                 </div>
-                <button type="submit" class="btn btn-primary" @click="register"><i class='bx bx-user-plus'></i> Register to Ch-APP
+                <button type="submit" class="btn btn-primary" @click="register" id="register-button">
+                    <i class='bx bx-user-plus'></i> Register to Ch-APP
                 </button>
                 <br>
                 <a href="/login" class="small">Login to existing account</a>
@@ -61,6 +62,10 @@
             },
             register() {
                 if (this.formValidate()) {
+
+                    // UI response
+                    this.buttonChange(1);
+
                     fetch("http://azurix.pl:8080/auth/register?email=" + this.formData.email + "&login=" + this.formData.login + "&password=" + this.formData.password, {
                         method: "GET",
                         credentials: 'include'
@@ -99,6 +104,11 @@
 
                             } else {
                                 // TODO: display error messages from API
+                                console.log('Bad response (prop. user exist)');
+                                this.buttonChange(2);
+                                setInterval( () => {
+                                    this.buttonChange(0);
+                                }, 2000);
                             }
                         });
                 } else {
@@ -107,6 +117,36 @@
                     console.log('All fields required');
                 }
             },
+            buttonChange (state) {
+
+                /*
+                *   0: default
+                *   1: registering...
+                *   2: user exist!
+                * */
+
+                // User UI response
+                const registerBtn = document.getElementById('register-button');
+
+                switch(state) {
+                    case 0:
+                        registerBtn.classList.add('btn-primary');
+                        registerBtn.classList.remove('btn-secondary', 'btn-danger');
+                        registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> Register to Ch-APP';
+                        break;
+                    case 1:
+                        registerBtn.classList.add('btn-secondary');
+                        registerBtn.classList.remove('btn-primary', 'btn-danger');
+                        registerBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Registering';
+                        break;
+                    case 2:
+                        registerBtn.classList.add('btn-danger');
+                        registerBtn.classList.remove('btn-secondary', 'btn-primary');
+                        registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> User exist!';
+                        break;
+                }
+
+            }
         }
     }
 </script>

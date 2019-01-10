@@ -481,6 +481,7 @@ __webpack_require__.r(__webpack_exports__);
     login: function login() {
       var _this = this;
 
+      // User UI response
       var loginBtn = document.getElementById('login-button');
       loginBtn.classList.add('btn-secondary');
       loginBtn.classList.remove('btn-primary');
@@ -559,6 +560,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'register',
   props: ['csrfToken'],
@@ -589,6 +591,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       if (this.formValidate()) {
+        // UI response
+        this.buttonChange(1);
         fetch("http://azurix.pl:8080/auth/register?email=" + this.formData.email + "&login=" + this.formData.login + "&password=" + this.formData.password, {
           method: "GET",
           credentials: 'include'
@@ -622,13 +626,50 @@ __webpack_require__.r(__webpack_exports__);
                 }
               });
             });
-          } else {// TODO: display error messages from API
+          } else {
+            // TODO: display error messages from API
+            console.log('Bad response (prop. user exist)');
+
+            _this.buttonChange(2);
+
+            setInterval(function () {
+              _this.buttonChange(0);
+            }, 2000);
           }
         });
       } else {
         // Form not valid
         // TODO: display form error messages
         console.log('All fields required');
+      }
+    },
+    buttonChange: function buttonChange(state) {
+      /*
+      *   0: default
+      *   1: registering...
+      *   2: user exist!
+      * */
+      // User UI response
+      var registerBtn = document.getElementById('register-button');
+
+      switch (state) {
+        case 0:
+          registerBtn.classList.add('btn-primary');
+          registerBtn.classList.remove('btn-secondary', 'btn-danger');
+          registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> Register to Ch-APP';
+          break;
+
+        case 1:
+          registerBtn.classList.add('btn-secondary');
+          registerBtn.classList.remove('btn-primary', 'btn-danger');
+          registerBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Registering';
+          break;
+
+        case 2:
+          registerBtn.classList.add('btn-danger');
+          registerBtn.classList.remove('btn-secondary', 'btn-primary');
+          registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> User exist!';
+          break;
       }
     }
   }
@@ -1748,7 +1789,7 @@ var render = function() {
           "button",
           {
             staticClass: "btn btn-primary",
-            attrs: { type: "submit" },
+            attrs: { type: "submit", id: "register-button" },
             on: { click: _vm.register }
           },
           [
@@ -13144,15 +13185,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************************************!*\
   !*** ./resources/js/components/auth/Register.vue ***!
   \***************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Register_vue_vue_type_template_id_d4f9cbe2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Register.vue?vue&type=template&id=d4f9cbe2& */ "./resources/js/components/auth/Register.vue?vue&type=template&id=d4f9cbe2&");
 /* harmony import */ var _Register_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Register.vue?vue&type=script&lang=js& */ "./resources/js/components/auth/Register.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Register_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Register_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -13182,7 +13222,7 @@ component.options.__file = "resources/js/components/auth/Register.vue"
 /*!****************************************************************************!*\
   !*** ./resources/js/components/auth/Register.vue?vue&type=script&lang=js& ***!
   \****************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
