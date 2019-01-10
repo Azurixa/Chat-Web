@@ -31,6 +31,7 @@
 
 <script>
     export default {
+        name: 'register',
         props: ['csrfToken'],
         data() {
             return {
@@ -93,7 +94,7 @@
                                             // TODO: error messages from controller
                                         }
                                     });
-                                    
+
                                 });
 
                             } else {

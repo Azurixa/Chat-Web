@@ -481,6 +481,10 @@ __webpack_require__.r(__webpack_exports__);
     login: function login() {
       var _this = this;
 
+      var loginBtn = document.getElementById('login-button');
+      loginBtn.classList.add('btn-secondary');
+      loginBtn.classList.remove('btn-primary');
+      loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
       fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
         method: "GET",
         credentials: 'include'
@@ -556,6 +560,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'register',
   props: ['csrfToken'],
   data: function data() {
     return {
@@ -1568,7 +1573,7 @@ var render = function() {
           "button",
           {
             staticClass: "btn btn-primary",
-            attrs: { type: "submit" },
+            attrs: { type: "submit", id: "login-button" },
             on: {
               click: function($event) {
                 _vm.login()
@@ -1577,7 +1582,7 @@ var render = function() {
           },
           [
             _c("i", { staticClass: "bx bx-log-in" }),
-            _vm._v(" Login to\n                Ch-APP\n            ")
+            _vm._v(" Login to Ch-APP\n            ")
           ]
         ),
         _vm._v(" "),

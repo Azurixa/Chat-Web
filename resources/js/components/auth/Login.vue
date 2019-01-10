@@ -12,8 +12,8 @@
                     <input type="password" name="password" class="form-control" id="password"
                            placeholder="Password" required v-model="formData.password">
                 </div>
-                <button type="submit" class="btn btn-primary" @click="login()"><i class='bx bx-log-in'></i> Login to
-                    Ch-APP
+                <button type="submit" class="btn btn-primary" @click="login()" id="login-button">
+                    <i class='bx bx-log-in'></i> Login to Ch-APP
                 </button>
                 <br>
                 <a href="/register" class="small">Create account</a>
@@ -36,6 +36,10 @@
         },
         methods: {
             login() {
+                const loginBtn = document.getElementById('login-button');
+                loginBtn.classList.add('btn-secondary');
+                loginBtn.classList.remove('btn-primary');
+                loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
                 fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
                     method: "GET",
                     credentials: 'include'
