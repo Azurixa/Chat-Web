@@ -106,7 +106,7 @@
                                 // TODO: display error messages from API
                                 console.log('Bad response (prop. user exist)');
                                 this.buttonChange(2);
-                                setInterval( () => {
+                                setTimeout( () => {
                                     this.buttonChange(0);
                                 }, 2000);
                             }
