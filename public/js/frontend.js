@@ -191,28 +191,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'chat',
   // from PHP vars >_>
@@ -232,8 +210,9 @@ __webpack_require__.r(__webpack_exports__);
         messages: [{
           id: 0,
           sender: {
-            login: "No messages"
-          }
+            login: "This room has no messages!"
+          },
+          message: 'Add someone to this room and start chatting!'
         }],
         messagesCount: this.defaultMessagesCount
       },
@@ -351,8 +330,9 @@ __webpack_require__.r(__webpack_exports__);
           _this4.activeRoom.messages = [{
             id: 0,
             sender: {
-              login: "No messages"
-            }
+              login: "This room has no messages!"
+            },
+            message: 'Add someone to this room and start chatting!'
           }];
         }
       });
@@ -1248,8 +1228,8 @@ var render = function() {
         ),
         _vm._v(" "),
         _c("div", { staticClass: "new-room-box" }, [
-          _c("div", { staticClass: "card p-3" }, [
-            _c("div", { staticClass: "form-group" }, [
+          _c("div", { staticClass: "card p-3 d-flex" }, [
+            _c("div", { staticClass: "w-100" }, [
               _c("input", {
                 directives: [
                   {
@@ -1286,30 +1266,48 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                attrs: { id: "add-room" },
-                on: {
-                  click: function($event) {
-                    _vm.createRoom()
+            _c("div", { staticClass: "position-relative" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { id: "add-room" },
+                  on: {
+                    click: function($event) {
+                      _vm.createRoom()
+                    }
                   }
-                }
-              },
-              [_vm._v("Create new room")]
-            ),
-            _vm._v(" "),
-            _c("p", {
-              staticClass: "mb-0 badge badge-danger",
-              attrs: { id: "roomCreateErrors" }
-            })
+                },
+                [_c("i", { staticClass: "bx bx-plus" })]
+              ),
+              _vm._v(" "),
+              _c("p", {
+                staticClass: "mb-0 badge badge-danger",
+                attrs: { id: "roomCreateErrors" }
+              })
+            ])
           ])
         ])
       ]
     ),
     _vm._v(" "),
     _c("div", { staticClass: "right-col" }, [
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: !_vm.activeRoom.visible,
+              expression: "!activeRoom.visible"
+            }
+          ],
+          attrs: { id: "active-room-placeholder" }
+        },
+        [_c("span", [_vm._v("Choose room to chat")])]
+      ),
+      _vm._v(" "),
       _c(
         "div",
         {
