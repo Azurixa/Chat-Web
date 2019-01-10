@@ -188,31 +188,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'chat',
   // from PHP vars >_>
@@ -232,8 +207,9 @@ __webpack_require__.r(__webpack_exports__);
         messages: [{
           id: 0,
           sender: {
-            login: "No messages"
-          }
+            login: "This room has no messages!"
+          },
+          message: 'Add someone to this room and start chatting!'
         }],
         messagesCount: this.defaultMessagesCount
       },
@@ -351,8 +327,9 @@ __webpack_require__.r(__webpack_exports__);
           _this4.activeRoom.messages = [{
             id: 0,
             sender: {
-              login: "No messages"
-            }
+              login: "This room has no messages!"
+            },
+            message: 'Add someone to this room and start chatting!'
           }];
         }
       });
@@ -466,6 +443,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'login',
   props: ['csrfToken'],
@@ -478,41 +456,82 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    formValidate: function formValidate() {
+      if (this.formData.login === '' || this.formData.email === '') {
+        return false;
+      }
+
+      return true;
+    },
     login: function login() {
       var _this = this;
 
-      var loginBtn = document.getElementById('login-button');
-      loginBtn.classList.add('btn-secondary');
-      loginBtn.classList.remove('btn-primary');
-      loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
-      fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
-        method: "GET",
-        credentials: 'include'
-      }).then(function (res) {
-        if (res.status === 200) {
-          res.json();
-        } else {//TODO: error message <- when api get update!
-        }
-      }).then(function (data) {
-        var formData = new FormData();
-        formData.append('login', _this.formData.login);
-        formData.append('password', _this.formData.password);
-        formData.append('_token', _this.csrfToken);
-        fetch("/login", {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Accept': 'application/json'
-          }
+      if (this.formValidate()) {
+        // User UI response
+        this.buttonChange(1);
+        fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
+          method: "GET",
+          credentials: 'include'
         }).then(function (res) {
-          return res.json();
-        }).then(function (data) {
-          if (data === 200) {
-            window.location.href = '/chat';
-          } else {// TODO: error messages from controller
+          if (res.status === 200) {
+            res.json();
+          } else {//TODO: error message <- when api get update!
           }
+        }).then(function (data) {
+          var formData = new FormData();
+          formData.append('login', _this.formData.login);
+          formData.append('password', _this.formData.password);
+          formData.append('_token', _this.csrfToken);
+          fetch("/login", {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          }).then(function (res) {
+            return res.json();
+          }).then(function (data) {
+            if (data === 200) {
+              window.location.href = '/chat';
+            } else {// TODO: error messages from controller
+            }
+          });
         });
-      });
+      } else {
+        // TODO: form validation failed
+        this.buttonChange(2);
+        setTimeout(function () {
+          _this.buttonChange(0);
+        }, 2000);
+      }
+    },
+    buttonChange: function buttonChange(state) {
+      /*
+      *   0: default
+      *   1: logging...
+      *   2: bad validation
+      * */
+      var loginBtn = document.getElementById('login-button');
+
+      switch (state) {
+        case 0:
+          loginBtn.classList.add('btn-primary');
+          loginBtn.classList.remove('btn-secondary', 'btn-danger');
+          loginBtn.innerHTML = '<i class="bx bx-log-in"></i> Login to Ch-APP';
+          break;
+
+        case 1:
+          loginBtn.classList.add('btn-secondary');
+          loginBtn.classList.remove('btn-primary', 'btn-danger');
+          loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
+          break;
+
+        case 2:
+          loginBtn.classList.add('btn-danger');
+          loginBtn.classList.remove('btn-secondary', 'btn-primary');
+          loginBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> Bad input/s value/s';
+          break;
+      }
     }
   }
 });
@@ -528,6 +547,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
 //
 //
 //
@@ -589,6 +612,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       if (this.formValidate()) {
+        // UI response
+        this.buttonChange(1);
         fetch("http://azurix.pl:8080/auth/register?email=" + this.formData.email + "&login=" + this.formData.login + "&password=" + this.formData.password, {
           method: "GET",
           credentials: 'include'
@@ -622,13 +647,58 @@ __webpack_require__.r(__webpack_exports__);
                 }
               });
             });
-          } else {// TODO: display error messages from API
+          } else {
+            // TODO: display error messages from API
+            console.log('Bad response (prop. user exist)');
+
+            _this.buttonChange(3);
+
+            setTimeout(function () {
+              _this.buttonChange(0);
+            }, 2000);
           }
         });
       } else {
         // Form not valid
-        // TODO: display form error messages
-        console.log('All fields required');
+        this.buttonChange(2);
+        setTimeout(function () {
+          _this.buttonChange(0);
+        }, 2000);
+      }
+    },
+    buttonChange: function buttonChange(state) {
+      /*
+      *   0: default
+      *   1: registering...
+      *   2: form validation error
+      *   3: user exist!
+      * */
+      var registerBtn = document.getElementById('register-button');
+
+      switch (state) {
+        case 0:
+          registerBtn.classList.add('btn-primary');
+          registerBtn.classList.remove('btn-secondary', 'btn-danger');
+          registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> Register to Ch-APP';
+          break;
+
+        case 1:
+          registerBtn.classList.add('btn-secondary');
+          registerBtn.classList.remove('btn-primary', 'btn-danger');
+          registerBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Registering';
+          break;
+
+        case 2:
+          registerBtn.classList.add('btn-danger');
+          registerBtn.classList.remove('btn-secondary', 'btn-primary');
+          registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> Bad input/s value/s';
+          break;
+
+        case 3:
+          registerBtn.classList.add('btn-danger');
+          registerBtn.classList.remove('btn-secondary', 'btn-primary');
+          registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> User exist!';
+          break;
       }
     }
   }
@@ -1178,8 +1248,8 @@ var render = function() {
         ),
         _vm._v(" "),
         _c("div", { staticClass: "new-room-box" }, [
-          _c("div", { staticClass: "card p-3" }, [
-            _c("div", { staticClass: "form-group" }, [
+          _c("div", { staticClass: "card p-3 d-flex" }, [
+            _c("div", { staticClass: "w-100" }, [
               _c("input", {
                 directives: [
                   {
@@ -1216,30 +1286,48 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                attrs: { id: "add-room" },
-                on: {
-                  click: function($event) {
-                    _vm.createRoom()
+            _c("div", { staticClass: "position-relative" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { id: "add-room" },
+                  on: {
+                    click: function($event) {
+                      _vm.createRoom()
+                    }
                   }
-                }
-              },
-              [_vm._v("Create new room")]
-            ),
-            _vm._v(" "),
-            _c("p", {
-              staticClass: "mb-0 badge badge-danger",
-              attrs: { id: "roomCreateErrors" }
-            })
+                },
+                [_c("i", { staticClass: "bx bx-plus" })]
+              ),
+              _vm._v(" "),
+              _c("p", {
+                staticClass: "mb-0 badge badge-danger",
+                attrs: { id: "roomCreateErrors" }
+              })
+            ])
           ])
         ])
       ]
     ),
     _vm._v(" "),
     _c("div", { staticClass: "right-col" }, [
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: !_vm.activeRoom.visible,
+              expression: "!activeRoom.visible"
+            }
+          ],
+          attrs: { id: "active-room-placeholder" }
+        },
+        [_c("span", [_vm._v("Choose room to chat")])]
+      ),
+      _vm._v(" "),
       _c(
         "div",
         {
@@ -1374,7 +1462,7 @@ var render = function() {
                     },
                     [
                       _vm._v(
-                        "Add new user to room\n                            "
+                        "\n                                Add new user to room\n                            "
                       )
                     ]
                   )
@@ -1423,7 +1511,7 @@ var render = function() {
                   }
                 ],
                 staticClass: "form-control",
-                attrs: { type: "text" },
+                attrs: { type: "text", placeholder: "Aa" },
                 domProps: { value: _vm.newMessage.message },
                 on: {
                   keydown: function($event) {
@@ -1529,6 +1617,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.login },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.login()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1559,6 +1656,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.password },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.login()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1644,6 +1750,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.login },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1674,6 +1789,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.email },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1704,6 +1828,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.password },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1734,6 +1867,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.passwordConfirm },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1748,7 +1890,7 @@ var render = function() {
           "button",
           {
             staticClass: "btn btn-primary",
-            attrs: { type: "submit" },
+            attrs: { type: "submit", id: "register-button" },
             on: { click: _vm.register }
           },
           [
@@ -13144,15 +13286,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************************************!*\
   !*** ./resources/js/components/auth/Register.vue ***!
   \***************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Register_vue_vue_type_template_id_d4f9cbe2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Register.vue?vue&type=template&id=d4f9cbe2& */ "./resources/js/components/auth/Register.vue?vue&type=template&id=d4f9cbe2&");
 /* harmony import */ var _Register_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Register.vue?vue&type=script&lang=js& */ "./resources/js/components/auth/Register.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Register_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Register_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -13182,7 +13323,7 @@ component.options.__file = "resources/js/components/auth/Register.vue"
 /*!****************************************************************************!*\
   !*** ./resources/js/components/auth/Register.vue?vue&type=script&lang=js& ***!
   \****************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

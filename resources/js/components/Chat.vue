@@ -15,34 +15,31 @@
             </div>
             <div id="room-list-box">
                 <!-- Draw all rooms user is in -->
-                <div
-                        class="card room-to-change"
-                        v-for="(room, index) in rooms"
-                        v-bind:key="index"
-                        v-on:click="changeRoom(room)"
-                >
+                <div class="card room-to-change" v-for="(room, index) in rooms" v-bind:key="index"
+                     v-on:click="changeRoom(room)">
                     <a class="d-block change-room-name">{{room.room.name}}</a>
                     <p class="small room-creator">{{room.room.creator.login}}</p>
                 </div>
             </div>
             <div class="new-room-box">
-                <div class="card p-3">
-                    <div class="form-group">
-                        <input
-                                type="text"
-                                class="form-control"
-                                id="add-room-name"
-                                placeholder="Name of new room"
-                                v-model="newRoom.name"
-                                v-on:keydown.enter="createRoom()"
-                        >
+                <div class="card p-3 d-flex">
+                    <div class="w-100">
+                        <input type="text" class="form-control" id="add-room-name" placeholder="Name of new room"
+                               v-model="newRoom.name" v-on:keydown.enter="createRoom()">
                     </div>
-                    <button id="add-room" class="btn btn-primary" v-on:click="createRoom()">Create new room</button>
-                    <p class="mb-0 badge badge-danger" id="roomCreateErrors"></p>
+                    <div class="position-relative">
+                        <button id="add-room" class="btn btn-primary" v-on:click="createRoom()">
+                            <i class='bx bx-plus'></i>
+                        </button>
+                        <p class="mb-0 badge badge-danger" id="roomCreateErrors"></p>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="right-col">
+            <div id="active-room-placeholder" v-show="!activeRoom.visible">
+                <span>Choose room to chat</span>
+            </div>
             <div id="active-room" v-show="activeRoom.visible">
                 <span id="active-room-id"></span>
                 <div class="header">
@@ -53,37 +50,21 @@
                     </div>
                     <p id="active-room-users">
 						<span id="roomUsers">
-							<span
-                                    v-for="(user, index) in activeRoom.users"
-                                    v-bind:key="index"
-                                    class="badge badge-secondary small mr-1"
-                            >{{user.user.login}}</span>
+							<span v-for="(user, index) in activeRoom.users" v-bind:key="index"
+                                  class="badge badge-secondary small mr-1">{{user.user.login}}</span>
 						</span>
-                        <span
-                                class="badge badge-success position-relative"
-                                id="addFormShow"
-                                style="bottom: -0.8px; z-index: 90"
-                        >
-							<i
-                                    class="bx bx-plus-circle"
-                                    title="Add user to room"
-                                    v-on:click="addUser.visible = !addUser.visible"
-                            ></i>
+                        <span class="badge badge-success position-relative" id="addFormShow"
+                              style="bottom: -0.8px; z-index: 90">
+							<i class="bx bx-plus-circle" title="Add user to room"
+                               v-on:click="addUser.visible = !addUser.visible"></i>
 						</span>
                     </p>
                     <div class="add-form form-group mt-2" id="roomAddForm" v-show="addUser.visible">
                         <div class="d-flex">
-                            <input
-                                    type="text"
-                                    class="form-control m-0"
-                                    placeholder="User login"
-                                    v-model="addUser.login"
-                                    v-on:keydown.enter="addUserToActiveRoom()"
-                            >
-                            <button
-                                    class="btn btn-sm btn-success"
-                                    v-on:click="addUserToActiveRoom()"
-                            >Add new user to room
+                            <input type="text" class="form-control m-0" placeholder="User login" v-model="addUser.login"
+                                   v-on:keydown.enter="addUserToActiveRoom()">
+                            <button class="btn btn-sm btn-success" v-on:click="addUserToActiveRoom()">
+                                Add new user to room
                             </button>
                         </div>
                         <p class="mb-0 badge badge-danger" id="roomAddUserErrors"></p>
@@ -91,10 +72,8 @@
                 </div>
                 <div id="room-messages">
                     <div v-for="(message, i) in activeRoom.messages" v-bind:key="i">
-                        <p
-                                class="message-sender"
-                                v-if="i == 0|| activeRoom.messages[i].sender.id !== activeRoom.messages[i - 1].sender.id"
-                        >
+                        <p class="message-sender"
+                           v-if="i == 0|| activeRoom.messages[i].sender.id !== activeRoom.messages[i - 1].sender.id">
                             <span class="badge-primary badge">{{message.sender.login}}</span>
                         </p>
                         <p class="message-body">{{message.message}}</p>
@@ -102,12 +81,8 @@
                 </div>
                 <div class="new-message d-flex">
                     <div class="form-group mb-0">
-                        <input
-                                type="text"
-                                class="form-control"
-                                v-model="newMessage.message"
-                                v-on:keydown.enter="sendMessage()"
-                        >
+                        <input type="text" class="form-control" v-model="newMessage.message"
+                               v-on:keydown.enter="sendMessage()" placeholder="Aa">
                     </div>
                     <button class="btn btn-primary" v-on:click="sendMessage()">Send</button>
                 </div>
@@ -137,8 +112,9 @@
                         {
                             id: 0,
                             sender: {
-                                login: "No messages"
-                            }
+                                login: "This room has no messages!",
+                            },
+                            message: 'Add someone to this room and start chatting!',
                         }
                     ],
                     messagesCount: this.defaultMessagesCount
@@ -252,8 +228,9 @@
                                 {
                                     id: 0,
                                     sender: {
-                                        login: "No messages"
-                                    }
+                                        login: "This room has no messages!",
+                                    },
+                                    message: 'Add someone to this room and start chatting!',
                                 }
                             ];
                         }

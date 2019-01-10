@@ -6,21 +6,25 @@
                 <p class="mb-4">new account to use Ch-APP</p>
                 <div class="form-group">
                     <input type="text" name="login" class="form-control" id="login" placeholder="Login"
-                           required v-model="formData.login">
+                           required v-model="formData.login"
+                           v-on:keydown.enter="register()">
                 </div>
                 <div class="form-group">
                     <input type="email" name="email" class="form-control" id="email" placeholder="E-mail"
-                           required v-model="formData.email">
+                           required v-model="formData.email"
+                           v-on:keydown.enter="register()">
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" id="password"
-                           placeholder="Password" required v-model="formData.password">
+                           placeholder="Password" required v-model="formData.password"
+                           v-on:keydown.enter="register()">
                 </div>
                 <div class="form-group">
                     <input type="password" name="password2" class="form-control" id="password2"
-                           placeholder="Confirm password" required v-model="formData.passwordConfirm">
+                           placeholder="Confirm password" required v-model="formData.passwordConfirm" v-on:keydown.enter="register()">
                 </div>
-                <button type="submit" class="btn btn-primary" @click="register"><i class='bx bx-user-plus'></i> Register to Ch-APP
+                <button type="submit" class="btn btn-primary" @click="register" id="register-button">
+                    <i class='bx bx-user-plus'></i> Register to Ch-APP
                 </button>
                 <br>
                 <a href="/login" class="small">Login to existing account</a>
@@ -61,6 +65,10 @@
             },
             register() {
                 if (this.formValidate()) {
+
+                    // UI response
+                    this.buttonChange(1);
+
                     fetch("http://azurix.pl:8080/auth/register?email=" + this.formData.email + "&login=" + this.formData.login + "&password=" + this.formData.password, {
                         method: "GET",
                         credentials: 'include'
@@ -99,14 +107,56 @@
 
                             } else {
                                 // TODO: display error messages from API
+                                console.log('Bad response (prop. user exist)');
+                                this.buttonChange(3);
+                                setTimeout( () => {
+                                    this.buttonChange(0);
+                                }, 2000);
                             }
                         });
                 } else {
                     // Form not valid
-                    // TODO: display form error messages
-                    console.log('All fields required');
+                    this.buttonChange(2);
+                    setTimeout( () => {
+                        this.buttonChange(0);
+                    }, 2000);
                 }
             },
+            buttonChange (state) {
+
+                /*
+                *   0: default
+                *   1: registering...
+                *   2: form validation error
+                *   3: user exist!
+                * */
+
+                const registerBtn = document.getElementById('register-button');
+
+                switch(state) {
+                    case 0:
+                        registerBtn.classList.add('btn-primary');
+                        registerBtn.classList.remove('btn-secondary', 'btn-danger');
+                        registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> Register to Ch-APP';
+                        break;
+                    case 1:
+                        registerBtn.classList.add('btn-secondary');
+                        registerBtn.classList.remove('btn-primary', 'btn-danger');
+                        registerBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Registering';
+                        break;
+                    case 2:
+                        registerBtn.classList.add('btn-danger');
+                        registerBtn.classList.remove('btn-secondary', 'btn-primary');
+                        registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> Bad input/s value/s';
+                        break;
+                    case 3:
+                        registerBtn.classList.add('btn-danger');
+                        registerBtn.classList.remove('btn-secondary', 'btn-primary');
+                        registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> User exist!';
+                        break;
+                }
+
+            }
         }
     }
 </script>
