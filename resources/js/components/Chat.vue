@@ -15,12 +15,8 @@
             </div>
             <div id="room-list-box">
                 <!-- Draw all rooms user is in -->
-                <div
-                        class="card room-to-change"
-                        v-for="(room, index) in rooms"
-                        v-bind:key="index"
-                        v-on:click="changeRoom(room)"
-                >
+                <div class="card room-to-change" v-for="(room, index) in rooms" v-bind:key="index"
+                     v-on:click="changeRoom(room)">
                     <a class="d-block change-room-name">{{room.room.name}}</a>
                     <p class="small room-creator">{{room.room.creator.login}}</p>
                 </div>
@@ -54,20 +50,21 @@
                     </div>
                     <p id="active-room-users">
 						<span id="roomUsers">
-							<span v-for="(user, index) in activeRoom.users" v-bind:key="index" class="badge badge-secondary small mr-1">{{user.user.login}}</span>
+							<span v-for="(user, index) in activeRoom.users" v-bind:key="index"
+                                  class="badge badge-secondary small mr-1">{{user.user.login}}</span>
 						</span>
-                        <span class="badge badge-success position-relative" id="addFormShow" style="bottom: -0.8px; z-index: 90">
-							<i class="bx bx-plus-circle" title="Add user to room" v-on:click="addUser.visible = !addUser.visible"></i>
+                        <span class="badge badge-success position-relative" id="addFormShow"
+                              style="bottom: -0.8px; z-index: 90">
+							<i class="bx bx-plus-circle" title="Add user to room"
+                               v-on:click="addUser.visible = !addUser.visible"></i>
 						</span>
                     </p>
                     <div class="add-form form-group mt-2" id="roomAddForm" v-show="addUser.visible">
                         <div class="d-flex">
                             <input type="text" class="form-control m-0" placeholder="User login" v-model="addUser.login"
                                    v-on:keydown.enter="addUserToActiveRoom()">
-                            <button
-                                    class="btn btn-sm btn-success"
-                                    v-on:click="addUserToActiveRoom()"
-                            >Add new user to room
+                            <button class="btn btn-sm btn-success" v-on:click="addUserToActiveRoom()">
+                                Add new user to room
                             </button>
                         </div>
                         <p class="mb-0 badge badge-danger" id="roomAddUserErrors"></p>
@@ -85,7 +82,7 @@
                 <div class="new-message d-flex">
                     <div class="form-group mb-0">
                         <input type="text" class="form-control" v-model="newMessage.message"
-                               v-on:keydown.enter="sendMessage()">
+                               v-on:keydown.enter="sendMessage()" placeholder="Aa">
                     </div>
                     <button class="btn btn-primary" v-on:click="sendMessage()">Send</button>
                 </div>

@@ -6,19 +6,22 @@
                 <p class="mb-4">new account to use Ch-APP</p>
                 <div class="form-group">
                     <input type="text" name="login" class="form-control" id="login" placeholder="Login"
-                           required v-model="formData.login">
+                           required v-model="formData.login"
+                           v-on:keydown.enter="register()">
                 </div>
                 <div class="form-group">
                     <input type="email" name="email" class="form-control" id="email" placeholder="E-mail"
-                           required v-model="formData.email">
+                           required v-model="formData.email"
+                           v-on:keydown.enter="register()">
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" id="password"
-                           placeholder="Password" required v-model="formData.password">
+                           placeholder="Password" required v-model="formData.password"
+                           v-on:keydown.enter="register()">
                 </div>
                 <div class="form-group">
                     <input type="password" name="password2" class="form-control" id="password2"
-                           placeholder="Confirm password" required v-model="formData.passwordConfirm">
+                           placeholder="Confirm password" required v-model="formData.passwordConfirm" v-on:keydown.enter="register()">
                 </div>
                 <button type="submit" class="btn btn-primary" @click="register" id="register-button">
                     <i class='bx bx-user-plus'></i> Register to Ch-APP
@@ -105,7 +108,7 @@
                             } else {
                                 // TODO: display error messages from API
                                 console.log('Bad response (prop. user exist)');
-                                this.buttonChange(2);
+                                this.buttonChange(3);
                                 setTimeout( () => {
                                     this.buttonChange(0);
                                 }, 2000);
@@ -113,8 +116,10 @@
                         });
                 } else {
                     // Form not valid
-                    // TODO: display form error messages
-                    console.log('All fields required');
+                    this.buttonChange(2);
+                    setTimeout( () => {
+                        this.buttonChange(0);
+                    }, 2000);
                 }
             },
             buttonChange (state) {
@@ -122,7 +127,8 @@
                 /*
                 *   0: default
                 *   1: registering...
-                *   2: user exist!
+                *   2: form validation error
+                *   3: user exist!
                 * */
 
                 const registerBtn = document.getElementById('register-button');
@@ -141,7 +147,12 @@
                     case 2:
                         registerBtn.classList.add('btn-danger');
                         registerBtn.classList.remove('btn-secondary', 'btn-primary');
-                        registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> User exist!';
+                        registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> Bad input/s value/s';
+                        break;
+                    case 3:
+                        registerBtn.classList.add('btn-danger');
+                        registerBtn.classList.remove('btn-secondary', 'btn-primary');
+                        registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> User exist!';
                         break;
                 }
 

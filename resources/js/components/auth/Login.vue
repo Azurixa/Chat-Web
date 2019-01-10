@@ -6,11 +6,12 @@
                 <p class="mb-4">to Ch-APP</p>
                 <div class="form-group">
                     <input type="text" name="login" class="form-control" id="login" placeholder="Login" required
-                           v-model="formData.login">
+                           v-model="formData.login" v-on:keydown.enter="login()">
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" id="password"
-                           placeholder="Password" required v-model="formData.password">
+                           placeholder="Password" required v-model="formData.password"
+                           v-on:keydown.enter="login()">
                 </div>
                 <button type="submit" class="btn btn-primary" @click="login()" id="login-button">
                     <i class='bx bx-log-in'></i> Login to Ch-APP
@@ -86,7 +87,10 @@
                         });
                 } else {
                     // TODO: form validation failed
-                    console.log('All fields required');
+                    this.buttonChange(2);
+                    setTimeout( () => {
+                        this.buttonChange(0);
+                    }, 2000);
                 }
             },
 
@@ -95,20 +99,26 @@
                 /*
                 *   0: default
                 *   1: logging...
+                *   2: bad validation
                 * */
 
                 const loginBtn = document.getElementById('login-button');
 
                 switch(state) {
                     case 0:
-                        registerBtn.classList.add('btn-primary');
-                        registerBtn.classList.remove('btn-secondary', 'btn-danger');
-                        registerBtn.innerHTML = '<i class="bx bx-log-in"></i> Login to Ch-APP';
+                        loginBtn.classList.add('btn-primary');
+                        loginBtn.classList.remove('btn-secondary', 'btn-danger');
+                        loginBtn.innerHTML = '<i class="bx bx-log-in"></i> Login to Ch-APP';
                         break;
                     case 1:
                         loginBtn.classList.add('btn-secondary');
-                        loginBtn.classList.remove('btn-primary');
+                        loginBtn.classList.remove('btn-primary', 'btn-danger');
                         loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
+                        break;
+                    case 2:
+                        loginBtn.classList.add('btn-danger');
+                        loginBtn.classList.remove('btn-secondary', 'btn-primary');
+                        loginBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> Bad input/s value/s';
                         break;
                 }
 

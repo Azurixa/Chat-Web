@@ -188,9 +188,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'chat',
   // from PHP vars >_>
@@ -446,6 +443,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'login',
   props: ['csrfToken'],
@@ -501,27 +499,37 @@ __webpack_require__.r(__webpack_exports__);
         });
       } else {
         // TODO: form validation failed
-        console.log('All fields required');
+        this.buttonChange(2);
+        setTimeout(function () {
+          _this.buttonChange(0);
+        }, 2000);
       }
     },
     buttonChange: function buttonChange(state) {
       /*
       *   0: default
       *   1: logging...
+      *   2: bad validation
       * */
       var loginBtn = document.getElementById('login-button');
 
       switch (state) {
         case 0:
-          registerBtn.classList.add('btn-primary');
-          registerBtn.classList.remove('btn-secondary', 'btn-danger');
-          registerBtn.innerHTML = '<i class="bx bx-log-in"></i> Login to Ch-APP';
+          loginBtn.classList.add('btn-primary');
+          loginBtn.classList.remove('btn-secondary', 'btn-danger');
+          loginBtn.innerHTML = '<i class="bx bx-log-in"></i> Login to Ch-APP';
           break;
 
         case 1:
           loginBtn.classList.add('btn-secondary');
-          loginBtn.classList.remove('btn-primary');
+          loginBtn.classList.remove('btn-primary', 'btn-danger');
           loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
+          break;
+
+        case 2:
+          loginBtn.classList.add('btn-danger');
+          loginBtn.classList.remove('btn-secondary', 'btn-primary');
+          loginBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> Bad input/s value/s';
           break;
       }
     }
@@ -539,6 +547,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -640,7 +651,7 @@ __webpack_require__.r(__webpack_exports__);
             // TODO: display error messages from API
             console.log('Bad response (prop. user exist)');
 
-            _this.buttonChange(2);
+            _this.buttonChange(3);
 
             setTimeout(function () {
               _this.buttonChange(0);
@@ -649,15 +660,18 @@ __webpack_require__.r(__webpack_exports__);
         });
       } else {
         // Form not valid
-        // TODO: display form error messages
-        console.log('All fields required');
+        this.buttonChange(2);
+        setTimeout(function () {
+          _this.buttonChange(0);
+        }, 2000);
       }
     },
     buttonChange: function buttonChange(state) {
       /*
       *   0: default
       *   1: registering...
-      *   2: user exist!
+      *   2: form validation error
+      *   3: user exist!
       * */
       var registerBtn = document.getElementById('register-button');
 
@@ -677,7 +691,13 @@ __webpack_require__.r(__webpack_exports__);
         case 2:
           registerBtn.classList.add('btn-danger');
           registerBtn.classList.remove('btn-secondary', 'btn-primary');
-          registerBtn.innerHTML = '<i class="bx bx-user-plus"></i> User exist!';
+          registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> Bad input/s value/s';
+          break;
+
+        case 3:
+          registerBtn.classList.add('btn-danger');
+          registerBtn.classList.remove('btn-secondary', 'btn-primary');
+          registerBtn.innerHTML = '<i class="bx bx-x bx-tada"></i> User exist!';
           break;
       }
     }
@@ -1442,7 +1462,7 @@ var render = function() {
                     },
                     [
                       _vm._v(
-                        "Add new user to room\n                            "
+                        "\n                                Add new user to room\n                            "
                       )
                     ]
                   )
@@ -1491,7 +1511,7 @@ var render = function() {
                   }
                 ],
                 staticClass: "form-control",
-                attrs: { type: "text" },
+                attrs: { type: "text", placeholder: "Aa" },
                 domProps: { value: _vm.newMessage.message },
                 on: {
                   keydown: function($event) {
@@ -1597,6 +1617,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.login },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.login()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1627,6 +1656,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.password },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.login()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1712,6 +1750,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.login },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1742,6 +1789,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.email },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1772,6 +1828,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.password },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -1802,6 +1867,15 @@ var render = function() {
             },
             domProps: { value: _vm.formData.passwordConfirm },
             on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.register()
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
