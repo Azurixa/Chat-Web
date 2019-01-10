@@ -54,6 +54,8 @@
                         }).then(res => res.json()).then(data => {
                             if (data === 200) {
                                 window.location.href = '/chat';
+                            } else {
+
                             }
                         });
                     });
