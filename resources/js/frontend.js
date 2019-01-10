@@ -9,12 +9,17 @@
 
 window.Vue = require('vue');
 
-Vue.component(
-    'chat', require('./components/Chat.vue').default
-);
-
+// Auth components
 Vue.component(
     'login', require('./components/auth/Login.vue').default
+);
+Vue.component(
+    'register', require('./components/auth/Register.vue').default
+);
+
+// Chat VUE
+Vue.component(
+    'chat', require('./components/Chat.vue').default
 );
 
 const app = new Vue({
