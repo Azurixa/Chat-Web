@@ -478,42 +478,72 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    formValidate: function formValidate() {
+      if (this.formData.login === '' || this.formData.email === '') {
+        return false;
+      }
+
+      return true;
+    },
     login: function login() {
       var _this = this;
 
-      // User UI response
-      var loginBtn = document.getElementById('login-button');
-      loginBtn.classList.add('btn-secondary');
-      loginBtn.classList.remove('btn-primary');
-      loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
-      fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
-        method: "GET",
-        credentials: 'include'
-      }).then(function (res) {
-        if (res.status === 200) {
-          res.json();
-        } else {//TODO: error message <- when api get update!
-        }
-      }).then(function (data) {
-        var formData = new FormData();
-        formData.append('login', _this.formData.login);
-        formData.append('password', _this.formData.password);
-        formData.append('_token', _this.csrfToken);
-        fetch("/login", {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Accept': 'application/json'
-          }
+      if (this.formValidate()) {
+        // User UI response
+        this.buttonChange(1);
+        fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
+          method: "GET",
+          credentials: 'include'
         }).then(function (res) {
-          return res.json();
-        }).then(function (data) {
-          if (data === 200) {
-            window.location.href = '/chat';
-          } else {// TODO: error messages from controller
+          if (res.status === 200) {
+            res.json();
+          } else {//TODO: error message <- when api get update!
           }
+        }).then(function (data) {
+          var formData = new FormData();
+          formData.append('login', _this.formData.login);
+          formData.append('password', _this.formData.password);
+          formData.append('_token', _this.csrfToken);
+          fetch("/login", {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          }).then(function (res) {
+            return res.json();
+          }).then(function (data) {
+            if (data === 200) {
+              window.location.href = '/chat';
+            } else {// TODO: error messages from controller
+            }
+          });
         });
-      });
+      } else {
+        // TODO: form validation failed
+        console.log('All fields required');
+      }
+    },
+    buttonChange: function buttonChange(state) {
+      /*
+      *   0: default
+      *   1: logging...
+      * */
+      var loginBtn = document.getElementById('login-button');
+
+      switch (state) {
+        case 0:
+          registerBtn.classList.add('btn-primary');
+          registerBtn.classList.remove('btn-secondary', 'btn-danger');
+          registerBtn.innerHTML = '<i class="bx bx-log-in"></i> Login to Ch-APP';
+          break;
+
+        case 1:
+          loginBtn.classList.add('btn-secondary');
+          loginBtn.classList.remove('btn-primary');
+          loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
+          break;
+      }
     }
   }
 });
@@ -632,7 +662,7 @@ __webpack_require__.r(__webpack_exports__);
 
             _this.buttonChange(2);
 
-            setInterval(function () {
+            setTimeout(function () {
               _this.buttonChange(0);
             }, 2000);
           }
@@ -649,7 +679,6 @@ __webpack_require__.r(__webpack_exports__);
       *   1: registering...
       *   2: user exist!
       * */
-      // User UI response
       var registerBtn = document.getElementById('register-button');
 
       switch (state) {

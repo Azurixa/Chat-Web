@@ -35,47 +35,83 @@
             }
         },
         methods: {
+            formValidate() {
+                if (
+                    this.formData.login === '' ||
+                    this.formData.email === ''
+                ) {
+                    return false;
+                }
+                return true;
+            },
+
             login() {
 
-                // User UI response
-                const loginBtn = document.getElementById('login-button');
-                loginBtn.classList.add('btn-secondary');
-                loginBtn.classList.remove('btn-primary');
-                loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
+                if (this.formValidate()) {
 
-                fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
-                    method: "GET",
-                    credentials: 'include'
-                })
-                    .then(res => {
-                        if(res.status === 200){
-                            res.json()
-                        } else {
-                            //TODO: error message <- when api get update!
-                        }
+                    // User UI response
+                    this.buttonChange(1);
+
+                    fetch("http://azurix.pl:8080/auth/login?login=" + this.formData.login + "&password=" + this.formData.password, {
+                        method: "GET",
+                        credentials: 'include'
                     })
-                    .then(data => {
-
-                        const formData = new FormData();
-                        formData.append('login', this.formData.login);
-                        formData.append('password', this.formData.password);
-                        formData.append('_token', this.csrfToken);
-
-                        fetch("/login", {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        }).then(res => res.json()).then(data => {
-                            if (data === 200) {
-                                window.location.href = '/chat';
+                        .then(res => {
+                            if (res.status === 200) {
+                                res.json()
                             } else {
-                                // TODO: error messages from controller
+                                //TODO: error message <- when api get update!
                             }
+                        })
+                        .then(data => {
+
+                            const formData = new FormData();
+                            formData.append('login', this.formData.login);
+                            formData.append('password', this.formData.password);
+                            formData.append('_token', this.csrfToken);
+
+                            fetch("/login", {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'Accept': 'application/json'
+                                }
+                            }).then(res => res.json()).then(data => {
+                                if (data === 200) {
+                                    window.location.href = '/chat';
+                                } else {
+                                    // TODO: error messages from controller
+                                }
+                            });
                         });
-                    });
-            }
+                } else {
+                    // TODO: form validation failed
+                    console.log('All fields required');
+                }
+            },
+            buttonChange (state) {
+
+                /*
+                *   0: default
+                *   1: logging...
+                * */
+
+                const loginBtn = document.getElementById('login-button');
+
+                switch(state) {
+                    case 0:
+                        registerBtn.classList.add('btn-primary');
+                        registerBtn.classList.remove('btn-secondary', 'btn-danger');
+                        registerBtn.innerHTML = '<i class="bx bx-log-in"></i> Login to Ch-APP';
+                        break;
+                    case 1:
+                        loginBtn.classList.add('btn-secondary');
+                        loginBtn.classList.remove('btn-primary');
+                        loginBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Logging in';
+                        break;
+                }
+
+            },
         }
     }
 </script>

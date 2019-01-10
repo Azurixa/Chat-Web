@@ -125,7 +125,6 @@
                 *   2: user exist!
                 * */
 
-                // User UI response
                 const registerBtn = document.getElementById('register-button');
 
                 switch(state) {
