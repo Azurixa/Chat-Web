@@ -58,7 +58,7 @@
                     })
                         .then(res => {
                             if (res.status === 200) {
-                                res.json()
+                                res.json();
                             } else {
                                 //TODO: error message <- when api get update!
                             }
@@ -89,6 +89,7 @@
                     console.log('All fields required');
                 }
             },
+
             buttonChange (state) {
 
                 /*
