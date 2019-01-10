@@ -463,6 +463,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'login',
   props: ['csrfToken'],
@@ -482,7 +485,10 @@ __webpack_require__.r(__webpack_exports__);
         method: "GET",
         credentials: 'include'
       }).then(function (res) {
-        return res.json();
+        if (res.status === 200) {
+          res.json();
+        } else {//TODO: error message <- when api get update!
+        }
       }).then(function (data) {
         var formData = new FormData();
         formData.append('login', _this.formData.login);
@@ -499,7 +505,8 @@ __webpack_require__.r(__webpack_exports__);
         }).then(function (data) {
           if (data === 200) {
             window.location.href = '/chat';
-          } else {}
+          } else {// TODO: error messages from controller
+          }
         });
       });
     }
@@ -559,6 +566,66 @@ __webpack_require__.r(__webpack_exports__);
         passwordConfirm: ''
       }
     };
+  },
+  methods: {
+    // Validate form
+    formValidate: function formValidate() {
+      if (this.formData.login === '' || this.formData.email === '' || this.formData.password === '' || this.formData.passwordConfirm === '') {
+        return false;
+      }
+
+      if (this.formData.password !== this.formData.passwordConfirm) {
+        return false;
+      }
+
+      return true;
+    },
+    register: function register() {
+      var _this = this;
+
+      if (this.formValidate()) {
+        fetch("http://azurix.pl:8080/auth/register?email=" + this.formData.email + "&login=" + this.formData.login + "&password=" + this.formData.password, {
+          method: "GET",
+          credentials: 'include'
+        }).then(function (res) {
+          return res.json();
+        }).then(function (data) {
+          if (data === 'CREATED') {
+            fetch("http://azurix.pl:8080/auth/login?login=" + _this.formData.login + "&password=" + _this.formData.password, {
+              method: "GET",
+              credentials: 'include'
+            }).then(function (res) {
+              return res.json();
+            }).then(function (data) {
+              // All good -> login user
+              var formData = new FormData();
+              formData.append('login', _this.formData.login);
+              formData.append('password', _this.formData.password);
+              formData.append('_token', _this.csrfToken);
+              fetch("/login", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                  'Accept': 'application/json'
+                }
+              }).then(function (res) {
+                return res.json();
+              }).then(function (data) {
+                if (data === 200) {
+                  window.location.href = '/chat';
+                } else {// TODO: error messages from controller
+                }
+              });
+            });
+          } else {// TODO: display error messages from API
+          }
+        });
+      } else {
+        // Form not valid
+        // TODO: display form error messages
+        console.log('All fields required');
+      }
+    }
   }
 });
 
@@ -1508,7 +1575,10 @@ var render = function() {
               }
             }
           },
-          [_c("i", { staticClass: "bx bx-log-in" }), _vm._v(" Login to Ch-APP")]
+          [
+            _c("i", { staticClass: "bx bx-log-in" }),
+            _vm._v(" Login to\n                Ch-APP\n            ")
+          ]
         ),
         _vm._v(" "),
         _c("br"),
@@ -1549,153 +1619,149 @@ var render = function() {
         _vm._v(" "),
         _c("p", { staticClass: "mb-4" }, [_vm._v("new account to use Ch-APP")]),
         _vm._v(" "),
-        _c("form", { attrs: { action: "/register", method: "post" } }, [
-          _c("div", { staticClass: "form-group" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.formData.login,
-                  expression: "formData.login"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: {
-                type: "text",
-                name: "login",
-                id: "login",
-                placeholder: "Login",
-                required: ""
-              },
-              domProps: { value: _vm.formData.login },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.formData, "login", $event.target.value)
-                }
+        _c("div", { staticClass: "form-group" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.formData.login,
+                expression: "formData.login"
               }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.formData.email,
-                  expression: "formData.email"
+            ],
+            staticClass: "form-control",
+            attrs: {
+              type: "text",
+              name: "login",
+              id: "login",
+              placeholder: "Login",
+              required: ""
+            },
+            domProps: { value: _vm.formData.login },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
                 }
-              ],
-              staticClass: "form-control",
-              attrs: {
-                type: "email",
-                name: "email",
-                id: "email",
-                placeholder: "E-mail",
-                required: ""
-              },
-              domProps: { value: _vm.formData.email },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.formData, "email", $event.target.value)
-                }
+                _vm.$set(_vm.formData, "login", $event.target.value)
               }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.formData.password,
-                  expression: "formData.password"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: {
-                type: "password",
-                name: "password",
-                id: "password",
-                placeholder: "Password",
-                required: ""
-              },
-              domProps: { value: _vm.formData.password },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.formData, "password", $event.target.value)
-                }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.formData.email,
+                expression: "formData.email"
               }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.formData.passwordConfirm,
-                  expression: "formData.passwordConfirm"
+            ],
+            staticClass: "form-control",
+            attrs: {
+              type: "email",
+              name: "email",
+              id: "email",
+              placeholder: "E-mail",
+              required: ""
+            },
+            domProps: { value: _vm.formData.email },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
                 }
-              ],
-              staticClass: "form-control",
-              attrs: {
-                type: "password",
-                name: "password2",
-                id: "password2",
-                placeholder: "Confirm password",
-                required: ""
-              },
-              domProps: { value: _vm.formData.passwordConfirm },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.formData, "passwordConfirm", $event.target.value)
-                }
+                _vm.$set(_vm.formData, "email", $event.target.value)
               }
-            })
-          ]),
-          _vm._v(" "),
-          _vm._m(0),
-          _c("br"),
-          _vm._v(" "),
-          _c("a", { staticClass: "small", attrs: { href: "/login" } }, [
-            _vm._v("Login to existing account")
-          ])
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.formData.password,
+                expression: "formData.password"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: {
+              type: "password",
+              name: "password",
+              id: "password",
+              placeholder: "Password",
+              required: ""
+            },
+            domProps: { value: _vm.formData.password },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.formData, "password", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.formData.passwordConfirm,
+                expression: "formData.passwordConfirm"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: {
+              type: "password",
+              name: "password2",
+              id: "password2",
+              placeholder: "Confirm password",
+              required: ""
+            },
+            domProps: { value: _vm.formData.passwordConfirm },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.formData, "passwordConfirm", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-primary",
+            attrs: { type: "submit" },
+            on: { click: _vm.register }
+          },
+          [
+            _c("i", { staticClass: "bx bx-user-plus" }),
+            _vm._v(" Register to Ch-APP\n            ")
+          ]
+        ),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("a", { staticClass: "small", attrs: { href: "/login" } }, [
+          _vm._v("Login to existing account")
         ])
       ])
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      { staticClass: "btn btn-primary", attrs: { type: "submit" } },
-      [
-        _c("i", { staticClass: "bx bx-user-plus" }),
-        _vm._v(" Register to Ch-APP")
-      ]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

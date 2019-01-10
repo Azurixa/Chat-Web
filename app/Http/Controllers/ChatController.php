@@ -66,9 +66,11 @@ class ChatController extends Controller
         $res = Api::login($login, $password);
         if ($res == 200) {
             // Logged in session vars added
+            http_response_code(200);
             return 200;
         } else {
             // Bad credentials
+            http_response_code(401);
             return 401;
         }
     }
